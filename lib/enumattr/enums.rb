@@ -34,21 +34,4 @@ module Enumattr
       @set.add Enum.new(key, value)
     end
   end
-
-  class Enum
-    attr_reader :key, :value
-
-    def initialize(key, value)
-      @key = key
-      @value = value
-    end
-
-    def hash
-      @key.hash
-    end
-
-    def eql?(other)
-      @key == other.key
-    end
-  end
 end
