@@ -4,8 +4,8 @@ require File.expand_path('../lib/enumattr/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["aisuii"]
   gem.email         = ["aisuiiaisuii@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{simple enum}
+  gem.summary       = %q{manage constants by enum like object}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($\)
