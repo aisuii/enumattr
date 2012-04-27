@@ -49,9 +49,17 @@ describe User do
     end
 
     describe '.status_value_by_key as #{enum_attr_name}_value_by_key' do
-      subject { described_class.status_value_by_key(:active) }
+      context "present key" do
+        subject { described_class.status_value_by_key(:active) }
 
-      it { should == 1 }
+        it { should == 1 }
+      end
+
+      context "not present key" do
+        subject { described_class.status_value_by_key(:not_present_key) }
+
+        it { should be_nil }
+      end
     end
   end
 

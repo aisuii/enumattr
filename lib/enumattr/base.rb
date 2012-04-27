@@ -42,7 +42,7 @@ module Enumattr
 
           define_method("#{method_prefix}value_by_key") do |key|
             enum = enums.enum_by_key(key)
-            enum.value
+            enum && enum.value
           end
         end
 
