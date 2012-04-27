@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["aisuiiaisuii@gmail.com"]
   gem.description   = %q{simple enum}
   gem.summary       = %q{manage constants by enum like object}
-  gem.homepage      = ""
+  gem.homepage      = "https://github.com/aisuii/enumattr"
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
