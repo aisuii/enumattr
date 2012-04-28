@@ -9,7 +9,7 @@ module Enumattr
     module ClassMethods
       private
       def enum_attr_for(enum_attr_name, &block)
-        enum_attrs[enum_attr_name] = Enums.new(&block)
+        enum_attrs[enum_attr_name] = Enums.new(self, &block)
         define_class_methods enum_attr_name
         define_instance_methods enum_attr_name
         define_instance_query_methods enum_attr_name

@@ -2,12 +2,19 @@
 require 'spec_helper'
 
 describe Enumattr::Enums do
+  let(:base) { Object }
+
   let(:enums) do
-    Enumattr::Enums.new do
+    Enumattr::Enums.new(base) do
       enum :key1, 1
       enum :key2, 2
       enum :key3, 3
     end
+  end
+
+  describe "#base" do
+    subject { enums.base }
+    it { should == Object }
   end
 
   describe "#enums" do
