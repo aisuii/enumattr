@@ -8,8 +8,9 @@ module Enumattr
 
     module ClassMethods
       private
-      def enumattr(enumattr_name, &block)
+      def enumattr(enumattr_name, options = {}, &block)
         enumattrs[enumattr_name] = Enums.new(self, &block)
+        enumattr_bases[enumattr_name] = options[:on] || enumattr_name
 
         define_enumattr_class_methods enumattr_name
         define_enumattr_instance_methods enumattr_name
@@ -17,6 +18,10 @@ module Enumattr
 
       def enumattrs
         @enumattrs ||= {}
+      end
+
+      def enumattr_bases
+        @enumattr_bases ||= {}
       end
 
       def define_enumattr_class_methods(enumattr_name)
@@ -51,9 +56,10 @@ module Enumattr
       def define_enumattr_instance_methods(enumattr_name)
         enums = enumattrs[enumattr_name]
         method_prefix = "#{enumattr_name}_"
+        enumattr_base = enumattr_bases[enumattr_name]
 
         define_method("#{method_prefix}enum") do
-          value = __send__ enumattr_name
+          value = __send__ enumattr_base
           enums.enum_by_value(value)
         end
 
@@ -62,19 +68,21 @@ module Enumattr
           enum.key
         end
 
-        alias_method :"#{method_prefix}value", enumattr_name
+        define_method(:"#{method_prefix}value") do
+          send enumattr_base
+        end
 
         # setter by key
         define_method("#{method_prefix}key=") do |new_key|
           new_enum = enums.enum_by_key(new_key)
           new_value = new_enum && new_enum.value
-          __send__ "#{enumattr_name}=", new_value
+          __send__ "#{enumattr_base}=", new_value
         end
 
         # Query methods
         enums.enums.each do |enum|
           define_method("#{method_prefix}#{enum.key}?") do
-            value = __send__ enumattr_name
+            value = __send__ enumattr_base
             value == enum.value
           end
         end

@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 require 'spec_helper'
 require 'user'
+require 'admin_user'
 
 describe User do
   describe "class methods" do
@@ -65,7 +66,7 @@ describe User do
 
 
   describe "instance methods" do
-    let(:user) { User.new(1) }
+    let(:user) { described_class.new(1) }
 
     describe "#status" do
       subject { user.status }
@@ -120,6 +121,130 @@ describe User do
 
     describe '#status_deleted? as #{enumattr_name}_#{other_status_key}?' do
       subject { user.status_deleted? }
+
+      it { should be_false }
+    end
+  end
+end
+
+describe AdminUser,"with :on option" do
+  describe 'class methods' do
+    describe '.authority_enums as #{enumattr_name}_enums' do
+      subject { described_class.authority_enums }
+
+      it { should be_a Set }
+      it { should have(3).items }
+      it "should have Enum instances" do
+        should satisfy { |enums|
+          enums.all?{|item| item.is_a? Enumattr::Enums::Enum }
+        }
+      end
+    end
+
+    describe '.authority_keys as #{enumattr_name}_keys' do
+      subject { described_class.authority_keys }
+
+      it { should be_a Set }
+      it { should have(3).items }
+      it "should have Symbol instances" do
+        should satisfy { |keys|
+          keys.all?{|item| item.is_a? Symbol }
+        }
+      end
+    end
+
+    describe '.authority_values as #{enumattr_name}_values' do
+      subject { described_class.authority_values }
+
+      it { should be_a Set }
+      it { should have(3).items }
+      it "should have Numeric instances" do
+        should satisfy { |values|
+          values.all?{|item| item.is_a? Numeric }
+        }
+      end
+    end
+
+    describe '.authority_enum(key) as #{enumattr_name}_enum(key)' do
+      subject { described_class.authority_enum(:super) }
+
+      it { should be_a Enumattr::Enums::Enum }
+      its(:key) { should == :super }
+      its(:value) { should == 1 }
+    end
+
+    describe '.authority_value(key) as #{enumattr_name}_value(key)' do
+      context "present key" do
+        subject { described_class.authority_value(:super) }
+
+        it { should == 1 }
+      end
+
+      context "not present key" do
+        subject { described_class.authority_value(:not_present_key) }
+
+        it { should be_nil }
+      end
+    end
+  end
+
+  describe "instance methods" do
+    let(:user) { described_class.new(1) }
+
+    describe "#role" do
+      subject { user.role }
+
+      it { should == 1 }
+    end
+
+    describe '#authority_enum as #{enumattr_name}_enum' do
+      subject { user.authority_enum }
+
+      it { should be_a Enumattr::Enums::Enum }
+      its(:key)   { should == :super }
+      its(:value) { should == 1 }
+    end
+
+    describe '#authority_key as #{enumattr_name}_key' do
+      subject { user.authority_key }
+
+      it { should be_a Symbol }
+      it { should == :super }
+    end
+
+    describe '#authority_key=(key) as #{enumattr_name}_key=(key)' do
+      before do
+        user.authority_key = :approver
+      end
+
+      subject { user }
+
+      its(:role) { should == 2 }
+      its(:authority_value) { should == 2 }
+      its(:authority_key) { should == :approver }
+    end
+
+    describe '#authority_value as #{enumattr_name}_value' do
+      subject { user.authority_value }
+
+      it { should be_a Numeric }
+      it { should == 1 }
+    end
+
+    describe '#authority_super? as #{enumattr_name}_#{authority_key}?' do
+      subject { user.authority_super? }
+
+      it { should be_true }
+    end
+
+    describe '#authority_approver? as #{enumattr_name}_#{other_authority_key}?' do
+      subject { user.authority_approver? }
+
+      it { should be_false }
+    end
+
+    describe '#authority_editor? as #{enumattr_name}_#{other_authority_key}?' do
+      subject { user.authority_editor? }
 
       it { should be_false }
     end
