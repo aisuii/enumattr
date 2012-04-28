@@ -14,9 +14,9 @@ describe Enumattr::Enums do
     subject { enums.enums }
     it { should be_a Set }
     it { should have(3).items }
-    it "should have Enumattr::Enum instances" do
+    it "should have Enumattr::Enums::Enum instances" do
       should satisfy { |enums|
-        enums.all?{|item| item.is_a? Enumattr::Enum }
+        enums.all?{|item| item.is_a? Enumattr::Enums::Enum }
       }
     end
   end
@@ -45,7 +45,7 @@ describe Enumattr::Enums do
 
   describe "find methods" do
     shared_examples "#enum_by_foo(foo) each items" do
-      it { should be_a Enumattr::Enum }
+      it { should be_a Enumattr::Enums::Enum }
       its(:key)   { should == expects[:key] }
       its(:value) { should == expects[:value] }
     end
@@ -80,5 +80,12 @@ describe Enumattr::Enums do
         end
       end
     end
+  end
+
+  describe Enumattr::Enums::Enum do
+    subject { enums.enum_by_key(:key1) }
+    its(:key) { should == :key1 }
+    its(:value) { should == 1 }
+    its(:enums) { should == enums.enums }
   end
 end

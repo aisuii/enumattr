@@ -11,7 +11,7 @@ describe User do
       it { should have(3).items }
       it "should have Enum instances" do
         should satisfy { |enums|
-          enums.all?{|item| item.is_a? Enumattr::Enum }
+          enums.all?{|item| item.is_a? Enumattr::Enums::Enum }
         }
       end
     end
@@ -43,7 +43,7 @@ describe User do
     describe '.status_enum_by_key as #{enum_attr_name}_enum_by_key' do
       subject { described_class.status_enum_by_key(:active) }
 
-      it { should be_a Enumattr::Enum }
+      it { should be_a Enumattr::Enums::Enum }
       its(:key) { should == :active }
       its(:value) { should == 1 }
     end
@@ -76,7 +76,7 @@ describe User do
     describe '#status_enum as #{enum_attr_name}_enum' do
       subject { user.status_enum }
 
-      it { should be_a Enumattr::Enum }
+      it { should be_a Enumattr::Enums::Enum }
       its(:key)   { should == :active }
       its(:value) { should == 1 }
     end

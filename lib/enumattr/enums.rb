@@ -30,7 +30,29 @@ module Enumattr
 
     private
     def enum(key, value)
-      @set.add Enum.new(key, value)
+      @set.add Enum.new(key, value, self)
+    end
+
+    class Enum
+      attr_reader :key, :value
+
+      def initialize(key, value, container)
+        @key = key.to_sym
+        @value = value
+        @container = container
+      end
+
+      def enums
+        @container.enums
+      end
+
+      def hash
+        @key.hash
+      end
+
+      def eql?(other)
+        @key == other.key
+      end
     end
   end
 end
