@@ -8,7 +8,7 @@ module Enumattr
 
     module ClassMethods
       private
-      def enum_attr_for(enum_attr_name, &block)
+      def enumattr(enum_attr_name, &block)
         enum_attrs[enum_attr_name] = Enums.new(self, &block)
         define_class_methods enum_attr_name
         define_instance_methods enum_attr_name
@@ -36,11 +36,11 @@ module Enumattr
             enums.values
           end
 
-          define_method("#{method_prefix}enum_by_key") do |key|
+          define_method("#{method_prefix}enum") do |key|
             enums.enum_by_key(key)
           end
 
-          define_method("#{method_prefix}value_by_key") do |key|
+          define_method("#{method_prefix}value") do |key|
             enum = enums.enum_by_key(key)
             enum && enum.value
           end

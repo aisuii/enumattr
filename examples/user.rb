@@ -5,10 +5,10 @@ class User
 
   attr_accessor :status
 
-  enum_attr_for :status do
-    enum :active,  1
-    enum :suspend, 2
-    enum :deleted, 3
+  enumattr :status do
+    enum :active,   1
+    enum :inactive, 2
+    enum :deleted,  3
   end
 
   def initialize(status)
