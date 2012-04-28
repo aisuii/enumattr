@@ -53,7 +53,7 @@ example:
 example:
 
     User.status_enums
-    #=> #<Set: {#<Enumattr::Enum:0x8a8d13c @key=:active, @value=1>, #<Enumattr::Enum:0x8a8d100 @key=:inactive, @value=2>, #<Enumattr::Enum:0x8a8d0ec @key=:deleted, @value=3>}>
+    #=> #<Set: {#<Enumattr::Enums::Enum:0x8a8d13c @key=:active, @value=1>, #<Enumattr::Enums::Enum:0x8a8d100 @key=:inactive, @value=2>, #<Enumattr::Enums::Enum:0x8a8d0ec @key=:deleted, @value=3>}>
 
     User.status_keys
     #=> #<Set: {:active, :inactive, :deleted}>
@@ -67,10 +67,10 @@ example:
 example:
 
     User.status_enum :active
-    #=> #<Enumattr::Enum:0x8a8d13c @key=:active, @value=1>
+    #=> #<Enumattr::Enums::Enum:0x8a8d13c @key=:active, @value=1>
     
     User.status_enum :inactive
-    #=> #<Enumattr::Enum:0x8a8d100 @key=:inactive, @value=2>
+    #=> #<Enumattr::Enums::Enum:0x8a8d100 @key=:inactive, @value=2>
     
     User.status_enum :dummy
     #=> nil
@@ -109,7 +109,7 @@ getters example:
     #=> :active
     
     user.status_enum
-    #=> #<Enumattr::Enum:0x8de2e68 @key=:active, @value=1>
+    #=> #<Enumattr::Enums::Enum:0x8de2e68 @key=:active, @value=1>
 
 setter example:
 
