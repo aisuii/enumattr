@@ -6,7 +6,6 @@ module Enumattr
     def initialize(&block)
       @set = Set.new
       instance_eval(&block)
-      freeze
     end
 
     def enums
