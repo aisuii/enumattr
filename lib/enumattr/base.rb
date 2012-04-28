@@ -64,6 +64,13 @@ module Enumattr
 
         alias_method :"#{method_prefix}value", enumattr_name
 
+        # setter by key
+        define_method("#{method_prefix}key=") do |new_key|
+          new_enum = enums.enum_by_key(new_key)
+          new_value = new_enum && new_enum.value
+          __send__ "#{enumattr_name}=", new_value
+        end
+
         # Query methods
         enums.enums.each do |enum|
           define_method("#{method_prefix}#{enum.key}?") do

@@ -88,6 +88,17 @@ describe User do
       it { should == :active }
     end
 
+    describe '#status_key=(key) as #{enumattr_name}_key=(key)' do
+      before do
+        user.status_key = :inactive
+      end
+
+      subject { user }
+
+      its(:status)     { should == 2 }
+      its(:status_key) { should == :inactive }
+    end
+
     describe '#status_value as #{enumattr_name}_value' do
       subject { user.status_value }
 
