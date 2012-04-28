@@ -8,53 +8,52 @@ module Enumattr
 
     module ClassMethods
       private
-      def enumattr(enum_attr_name, &block)
-        enum_attrs[enum_attr_name] = Enums.new(self, &block)
-        define_class_methods enum_attr_name
-        define_instance_methods enum_attr_name
-        define_instance_query_methods enum_attr_name
+      def enumattr(enumattr_name, &block)
+        enumattrs[enumattr_name] = Enums.new(self, &block)
+
+        define_enumattr_class_methods enumattr_name
+        define_enumattr_instance_methods enumattr_name
       end
 
-      def enum_attrs
-        @enum_attrs ||= {}
+      def enumattrs
+        @enumattrs ||= {}
       end
 
-      def define_class_methods(enum_attr_name)
-        enums = enum_attrs[enum_attr_name]
-        method_prefix = "#{enum_attr_name}_"
+      def define_enumattr_class_methods(enumattr_name)
+        method_prefix = "#{enumattr_name}_"
 
-        mod = Module.new do
+        enumattr_class_methods = Module.new do
           define_method("#{method_prefix}enums") do
-            enums.enums
+            enumattrs[enumattr_name].enums
           end
 
           define_method("#{method_prefix}keys") do
-            enums.keys
+            enumattrs[enumattr_name].keys
           end
 
           define_method("#{method_prefix}values") do
-            enums.values
+            enumattrs[enumattr_name].values
           end
 
           define_method("#{method_prefix}enum") do |key|
-            enums.enum_by_key(key)
+            enumattrs[enumattr_name].enum_by_key(key)
           end
 
           define_method("#{method_prefix}value") do |key|
-            enum = enums.enum_by_key(key)
+            enum = enumattrs[enumattr_name].enum_by_key(key)
             enum && enum.value
           end
         end
 
-        extend mod
+        extend enumattr_class_methods
       end
 
-      def define_instance_methods(enum_attr_name)
-        enums = enum_attrs[enum_attr_name]
-        method_prefix = "#{enum_attr_name}_"
+      def define_enumattr_instance_methods(enumattr_name)
+        enums = enumattrs[enumattr_name]
+        method_prefix = "#{enumattr_name}_"
 
         define_method("#{method_prefix}enum") do
-          value = __send__ enum_attr_name
+          value = __send__ enumattr_name
           enums.enum_by_value(value)
         end
 
@@ -63,16 +62,12 @@ module Enumattr
           enum.key
         end
 
-        alias_method :"#{method_prefix}value", enum_attr_name
-      end
+        alias_method :"#{method_prefix}value", enumattr_name
 
-      def define_instance_query_methods(enum_attr_name)
-        enums = enum_attrs[enum_attr_name]
-        method_prefix = "#{enum_attr_name}_"
-
+        # Query methods
         enums.enums.each do |enum|
           define_method("#{method_prefix}#{enum.key}?") do
-            value = __send__ enum_attr_name
+            value = __send__ enumattr_name
             value == enum.value
           end
         end
