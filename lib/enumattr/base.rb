@@ -59,12 +59,12 @@ module Enumattr
         enumattr_base = enumattr_bases[enumattr_name]
 
         define_method("#{method_prefix}enum") do
-          value = __send__ enumattr_base
+          value = send enumattr_base
           enums.enum_by_value(value)
         end
 
         define_method("#{method_prefix}key") do
-          enum = __send__ "#{method_prefix}enum"
+          enum = send "#{method_prefix}enum"
           enum && enum.key
         end
 
@@ -76,13 +76,13 @@ module Enumattr
         define_method("#{method_prefix}key=") do |new_key|
           new_enum = enums.enum_by_key(new_key)
           new_value = new_enum && new_enum.value
-          __send__ "#{enumattr_base}=", new_value
+          send "#{enumattr_base}=", new_value
         end
 
         # Query methods
         enums.enums.each do |enum|
           define_method("#{method_prefix}#{enum.key}?") do
-            value = __send__ enumattr_base
+            value = send enumattr_base
             value == enum.value
           end
         end
