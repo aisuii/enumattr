@@ -124,6 +124,17 @@ describe User do
 
       it { should be_false }
     end
+
+    context "out of range value" do
+      subject { user }
+      before { user.status = 4 }
+      its(:status_enum)      { should be_nil }
+      its(:status_key)       { should be_nil }
+      its(:status_value)     { should == 4 }
+      its(:status_active?)   { should be_false }
+      its(:status_inactive?) { should be_false }
+      its(:status_deleted?)  { should be_false }
+    end
   end
 end
 
@@ -187,6 +198,7 @@ describe AdminUser,"with :on option" do
       end
     end
   end
+
 
   describe "instance methods" do
     let(:user) { described_class.new(1) }

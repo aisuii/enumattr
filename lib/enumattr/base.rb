@@ -65,7 +65,7 @@ module Enumattr
 
         define_method("#{method_prefix}key") do
           enum = __send__ "#{method_prefix}enum"
-          enum.key
+          enum && enum.key
         end
 
         define_method(:"#{method_prefix}value") do
