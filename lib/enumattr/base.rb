@@ -9,7 +9,15 @@ module Enumattr
     module ClassMethods
       private
       def enumattr(enumattr_name, options = {}, &block)
-        enumattrs[enumattr_name] = Enums.new(self, &block)
+        if options[:enums]
+          closure = Proc.new do
+            options[:enums].each{|key, value| enum key, value }
+          end
+          enumattrs[enumattr_name] = Enums.new(self, &closure)
+        else
+          enumattrs[enumattr_name] = Enums.new(self, &block)
+        end
+
         enumattr_bases[enumattr_name] = options[:on] || enumattr_name
 
         define_enumattr_class_methods enumattr_name

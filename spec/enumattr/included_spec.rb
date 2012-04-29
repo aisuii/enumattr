@@ -2,8 +2,9 @@
 require 'spec_helper'
 require 'user'
 require 'admin_user'
+require 'entry'
 
-describe User do
+describe User, 'declare with block' do
   describe "class methods" do
     describe '.status_enums as #{enumattr_name}_enums' do
       subject { described_class.status_enums }
@@ -138,6 +139,7 @@ describe User do
   end
 end
 
+
 describe AdminUser,"with :on option" do
   describe 'class methods' do
     describe '.authority_enums as #{enumattr_name}_enums' do
@@ -257,6 +259,126 @@ describe AdminUser,"with :on option" do
 
     describe '#authority_editor? as #{enumattr_name}_#{other_authority_key}?' do
       subject { user.authority_editor? }
+
+      it { should be_false }
+    end
+  end
+end
+
+
+describe Entry,"with :enums option" do
+  describe 'class methods' do
+    describe '.show_flag_enums as #{enumattr_name}_enums' do
+      subject { described_class.show_flag_enums }
+
+      it { should be_a Set }
+      it { should have(2).items }
+      it "should have Enum instances" do
+        should satisfy { |enums|
+          enums.all?{|item| item.is_a? Enumattr::Enums::Enum }
+        }
+      end
+    end
+
+    describe '.show_flag_keys as #{enumattr_name}_keys' do
+      subject { described_class.show_flag_keys }
+
+      it { should be_a Set }
+      it { should have(2).items }
+      it "should have Symbol instances" do
+        should satisfy { |keys|
+          keys.all?{|item| item.is_a? Symbol }
+        }
+      end
+    end
+
+    describe '.show_flag_values as #{enumattr_name}_values' do
+      subject { described_class.show_flag_values }
+
+      it { should be_a Set }
+      it { should have(2).items }
+      it "should have TrueClass or FalseClass instances" do
+        should satisfy { |values|
+          values.all?{|item| item.is_a? TrueClass or item.is_a? FalseClass }
+        }
+      end
+    end
+
+    describe '.show_flag_enum(key) as #{enumattr_name}_enum(key)' do
+      subject { described_class.show_flag_enum(:opened) }
+
+      it { should be_a Enumattr::Enums::Enum }
+      its(:key) { should == :opened }
+      its(:value) { should == true }
+    end
+
+    describe '.show_flag_value(key) as #{enumattr_name}_value(key)' do
+      context "present key" do
+        subject { described_class.show_flag_value(:opened) }
+
+        it { should == true }
+      end
+
+      context "not present key" do
+        subject { described_class.show_flag_value(:not_present_key) }
+
+        it { should be_nil }
+      end
+    end
+  end
+
+
+  describe "instance methods" do
+    let(:entry) { described_class.new(true) }
+
+    describe "#show_flag" do
+      subject { entry.show_flag }
+
+      it { should == true }
+    end
+
+    describe '#show_flag_enum as #{enumattr_name}_enum' do
+      subject { entry.show_flag_enum }
+
+      it { should be_a Enumattr::Enums::Enum }
+      its(:key)   { should == :opened }
+      its(:value) { should == true }
+    end
+
+    describe '#show_flag_key as #{enumattr_name}_key' do
+      subject { entry.show_flag_key }
+
+      it { should be_a Symbol }
+      it { should == :opened }
+    end
+
+    describe '#show_flag_key=(key) as #{enumattr_name}_key=(key)' do
+      before do
+        entry.show_flag_key = :closed
+      end
+
+      subject { entry }
+
+      its(:show_flag) { should == false }
+      its(:show_flag_value) { should == false }
+      its(:show_flag_key) { should == :closed }
+    end
+
+    describe '#show_flag_value as #{enumattr_name}_value' do
+      subject { entry.show_flag_value }
+
+      it { should be_a TrueClass }
+      it { should == true }
+    end
+
+    describe '#show_flag_opened? as #{enumattr_name}_#{show_flag_key}?' do
+      subject { entry.show_flag_opened? }
+
+      it { should be_true }
+    end
+
+    describe '#show_flag_closed? as #{enumattr_name}_#{other_show_flag_key}?' do
+      subject { entry.show_flag_closed? }
 
       it { should be_false }
     end
