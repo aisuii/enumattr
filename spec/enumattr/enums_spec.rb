@@ -2,19 +2,41 @@
 require 'spec_helper'
 
 describe Enumattr::Enums do
-  let(:base) { Object }
-
   let(:enums) do
-    Enumattr::Enums.new(base) do
+    defining_context = {
+      :class     => Object,
+      :enumattr  => :example,
+      :something => :something
+    }
+
+    Enumattr::Enums.new(defining_context) do
       enum :key1, 1
       enum :key2, 2
       enum :key3, 3
     end
   end
 
-  describe "#base" do
-    subject { enums.base }
-    it { should == Object }
+  describe "#context" do
+    subject { enums.context }
+    it { should be_a Hash }
+    it { should be_frozen }
+  end
+
+  describe "#context contents" do
+    describe ":class" do
+      subject { enums.context[:class] }
+      it { should == Object }
+    end
+
+    describe ":enumattr" do
+      subject { enums.context[:enumattr] }
+      it { should == :example }
+    end
+
+    describe ":something" do
+      subject { enums.context[:something] }
+      it { should == :something }
+    end
   end
 
   describe "#enums" do

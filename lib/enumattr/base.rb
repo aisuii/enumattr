@@ -13,11 +13,13 @@ module Enumattr
           closure = Proc.new do
             options[:enums].each{|key, value| enum key, value }
           end
-          enumattrs[enumattr_name] = Enums.new(self, &closure)
         else
-          enumattrs[enumattr_name] = Enums.new(self, &block)
+          closure = block
         end
 
+        context = options.merge(:enumattr => enumattr_name, :base => self)
+
+        enumattrs[enumattr_name] = Enums.new(context, &closure)
         enumattr_bases[enumattr_name] = options[:on] || enumattr_name
 
         define_enumattr_class_methods enumattr_name

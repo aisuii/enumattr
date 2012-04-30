@@ -3,10 +3,10 @@ require 'set'
 
 module Enumattr
   class Enums
-    attr_reader :base
+    attr_reader :context
 
-    def initialize(base, &block)
-      @base = base
+    def initialize(context, &block)
+      @context = context.freeze
       @set = Set.new
       instance_eval(&block)
     end
