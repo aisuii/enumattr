@@ -1,7 +1,8 @@
 # Enumattr
 
-* manage constants by enum like object
-* simplify [SelectableAttr](https://github.com/akm/selectable_attr)
+* mapping constant value and keyword
+* _class_ knows the mapping
+* _instance_ knows its attribute value's keyword from the mapping
 
 ## Installation
 
@@ -21,7 +22,8 @@ Or install it yourself as:
 
 ### defining
 
-1. `include Enumattr::Base` and declare `enumattr attribute_name do ... end`
+1. `include Enumattr::Base`
+2. declare `enumattr attribute_name do ... end`
 2. `enum :symbol, value` in `do ... end`
 
 example:
@@ -42,7 +44,43 @@ example:
       end
     end
 
-### defined methods
+or alternative style
+
+1. `include Enumattr::Base`
+2. declare `enumattr attribute_name, :enums => {:symbol => value ...}`
+
+example:
+
+    class User
+      include Enumattr::Base
+
+      attr_accessor :status
+
+      enumattr :status, :enums => {:active => 1, :inactive => 2, :deleted => 3}
+
+      def initialize(status)
+        @status = status
+      end
+    end
+
+### defining options
+
+    class User
+      include Enumattr::Base
+
+      attr_accessor :status
+
+      # alt enum attribute_name and :on option with real_attribute_name
+      enumattr :use_status, :on => :status do
+        enum :active,   1
+        enum :inactive, 2
+        enum :deleted,  3
+      end
+
+      def initialize(status)
+        @status = status
+      end
+    end
 
 #### class methods
 
@@ -135,7 +173,7 @@ example:
     #=> false
     
     user.status_dummy?
-    NoMethodError: undefined method `status_dummy?' for #<User:0x8e17dac @status=1>
+    NoMethodError: undefined method `status_dummy?' for #<User:0x8e17dac @status=2>
 
 ## Contributing
 
