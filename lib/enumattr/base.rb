@@ -10,14 +10,17 @@ module Enumattr
       private
       def enumattr(enumattr_name, options = {}, &block)
         enums = Enums.new(enumattr_name, self, options, &block)
-        enumattrs[enumattr_name] =  enums
-
-        define_enumattr_class_methods enumattr_name
-        define_enumattr_instance_methods enumattr_name
+        enumattrs[enumattr_name] = enums
+        define_enumattr_methods(enumattr_name)
       end
 
       def enumattrs
         @enumattrs ||= {}
+      end
+
+      def define_enumattr_methods(enumattr_name)
+        define_enumattr_class_methods(enumattr_name)
+        define_enumattr_instance_methods(enumattr_name)
       end
 
       def define_enumattr_class_methods(enumattr_name)
