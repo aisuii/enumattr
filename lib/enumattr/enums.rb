@@ -3,12 +3,14 @@ require 'set'
 
 module Enumattr
   class Enums
-    attr_reader :context
+    attr_reader :enumattr, :base, :opts
 
-    def initialize(context, &block)
-      @context = context.freeze
-      @set = Set.new
-      instance_eval(&block)
+    def initialize(enumattr, base, opts = {}, &block)
+      @enumattr = enumattr
+      @base     = base
+      @opts     = opts.freeze
+      @set      = enum_set(&block)
+      decorate
     end
 
     def enums
@@ -32,21 +34,44 @@ module Enumattr
     end
 
     private
-    def enum(key, value)
-      @set.add Enum.new(key, value, self)
+    def enum_set(&block)
+      if enums_hash = @opts[:enums]
+        closure = proc{ enums_hash.each{|key, value| enum key, value } }
+      else
+        closure = block
+      end
+
+      context = Context.new(self, &closure)
+      context.instance_variable_get(:@set)
+    end
+
+    def decorate
+      if @opts.has_key?(:extend)
+        @set.each{|enum| enum.extend @opts[:extend] }
+      end
+    end
+
+    class Context
+      def initialize(container, &closure)
+        @container = container
+        @set = Set.new
+        instance_eval(&closure)
+      end
+
+      private
+      def enum(key, value, *extras)
+        @set.add Enum.new(@container, key, value, *extras)
+      end
     end
 
     class Enum
       attr_reader :key, :value
 
-      def initialize(key, value, container)
-        @key = key.to_sym
-        @value = value
+      def initialize(container, key, value, *extras)
         @container = container
-      end
-
-      def enums
-        @container.enums
+        @key       = key.to_sym
+        @value     = value
+        @extras    = extras
       end
 
       def hash
@@ -57,5 +82,6 @@ module Enumattr
         @key == other.key
       end
     end
+
   end
 end

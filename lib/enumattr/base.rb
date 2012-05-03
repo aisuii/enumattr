@@ -9,18 +9,8 @@ module Enumattr
     module ClassMethods
       private
       def enumattr(enumattr_name, options = {}, &block)
-        if options[:enums]
-          closure = Proc.new do
-            options[:enums].each{|key, value| enum key, value }
-          end
-        else
-          closure = block
-        end
-
-        context = options.merge(:enumattr => enumattr_name, :base => self)
-
-        enumattrs[enumattr_name] = Enums.new(context, &closure)
-        enumattr_bases[enumattr_name] = options[:on] || enumattr_name
+        enums = Enums.new(enumattr_name, self, options, &block)
+        enumattrs[enumattr_name] =  enums
 
         define_enumattr_class_methods enumattr_name
         define_enumattr_instance_methods enumattr_name
@@ -28,10 +18,6 @@ module Enumattr
 
       def enumattrs
         @enumattrs ||= {}
-      end
-
-      def enumattr_bases
-        @enumattr_bases ||= {}
       end
 
       def define_enumattr_class_methods(enumattr_name)
@@ -66,10 +52,10 @@ module Enumattr
       def define_enumattr_instance_methods(enumattr_name)
         enums = enumattrs[enumattr_name]
         method_prefix = "#{enumattr_name}_"
-        enumattr_base = enumattr_bases[enumattr_name]
+        enumattr_on = enums.opts[:on] || enumattr_name
 
         define_method("#{method_prefix}enum") do
-          value = send enumattr_base
+          value = send enumattr_on
           enums.enum_by_value(value)
         end
 
@@ -79,20 +65,20 @@ module Enumattr
         end
 
         define_method(:"#{method_prefix}value") do
-          send enumattr_base
+          send enumattr_on
         end
 
         # setter by key
         define_method("#{method_prefix}key=") do |new_key|
           new_enum = enums.enum_by_key(new_key)
           new_value = new_enum && new_enum.value
-          send "#{enumattr_base}=", new_value
+          send "#{enumattr_on}=", new_value
         end
 
         # Query methods
         enums.enums.each do |enum|
           define_method("#{method_prefix}#{enum.key}?") do
-            value = send enumattr_base
+            value = send enumattr_on
             value == enum.value
           end
         end

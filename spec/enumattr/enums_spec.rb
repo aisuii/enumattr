@@ -2,119 +2,129 @@
 require 'spec_helper'
 
 describe Enumattr::Enums do
-  let(:enums) do
-    defining_context = {
-      :class     => Object,
-      :enumattr  => :example,
-      :something => :something
-    }
-
-    Enumattr::Enums.new(defining_context) do
-      enum :key1, 1
-      enum :key2, 2
-      enum :key3, 3
-    end
-  end
-
-  describe "#context" do
-    subject { enums.context }
-    it { should be_a Hash }
-    it { should be_frozen }
-  end
-
-  describe "#context contents" do
-    describe ":class" do
-      subject { enums.context[:class] }
-      it { should == Object }
+  shared_examples "Enumattr::Enums find methods" do
+    describe "enum_by_key" do
+      context "with :test1" do
+        subject { enums.enum_by_key(:test1) }
+        it { should be_a Enumattr::Enums::Enum }
+        its(:key) { should == :test1 }
+        its(:value) { should == 1 }
+      end
     end
 
-    describe ":enumattr" do
-      subject { enums.context[:enumattr] }
-      it { should == :example }
+    describe "enum_by_value" do
+      context "with 1" do
+        subject { enums.enum_by_value(1) }
+        it { should be_a Enumattr::Enums::Enum }
+        its(:key) { should == :test1 }
+        its(:value) { should == 1 }
+      end
     end
 
-    describe ":something" do
-      subject { enums.context[:something] }
-      it { should == :something }
-    end
-  end
-
-  describe "#enums" do
-    subject { enums.enums }
-    it { should be_a Set }
-    it { should have(3).items }
-    it "should have Enumattr::Enums::Enum instances" do
-      should satisfy { |enums|
-        enums.all?{|item| item.is_a? Enumattr::Enums::Enum }
-      }
-    end
-  end
-
-  describe "#keys" do
-    subject { enums.keys }
-    it { should be_a Set }
-    it { should have(3).items }
-    it "should have Symbol instances" do
-      should satisfy { |keys|
-        keys.all?{|item| item.is_a? Symbol }
-      }
-    end
-  end
-
-  describe "#values" do
-    subject { enums.values }
-    it { should be_a Set }
-    it { should have(3).items }
-    it "should have Numeric instances" do
-      should satisfy { |values|
-        values.all?{|item| item.is_a? Numeric }
-      }
-    end
-  end
-
-  describe "find methods" do
-    shared_examples "#enum_by_foo(foo) each items" do
+    describe "enum_by_key :test1" do
+      subject { enums.enum_by_key(:test1) }
       it { should be_a Enumattr::Enums::Enum }
-      its(:key)   { should == expects[:key] }
-      its(:value) { should == expects[:value] }
+      its(:key) { should == :test1 }
+      its(:value) { should == 1 }
     end
 
-    samples = [
-      {:key => :key1, :value => 1},
-      {:key => :key2, :value => 2},
-      {:key => :key3, :value => 3},
-    ]
-
-    describe "#enum_by_key(key)" do
-      subject { enums.enum_by_key(key) }
-      samples.each do |sample|
-        context "key: #{sample[:key]}" do
-          let(:key) { sample[:key] }
-          let(:expects) { sample }
-
-          include_examples "#enum_by_foo(foo) each items"
-        end
-      end
-    end
-
-    describe "#enum_by_value(value)" do
-      subject { enums.enum_by_value(value) }
-
-      samples.each do |sample|
-        context "value: #{sample[:value]}" do
-          let(:value) { sample[:value] }
-          let(:expects) { sample }
-
-          include_examples "#enum_by_foo(foo) each items"
-        end
-      end
+    describe "enum_by_key :not_registered" do
+      subject { enums.enum_by_key(:not_registered) }
+      it { should be_nil }
     end
   end
 
-  describe Enumattr::Enums::Enum do
-    subject { enums.enum_by_key(:key1) }
-    its(:key) { should == :key1 }
-    its(:value) { should == 1 }
-    its(:enums) { should == enums.enums }
+  context "with enumattr, base and block" do
+    class EnumsTest1
+      include Enumattr::Base
+
+      attr_accessor :test
+
+      enumattr :test do
+        enum :test1, 1
+        enum :test2, 2
+        enum :test3, 3
+        enum :test4, 4
+        enum :test5, 5
+      end
+    end
+
+    let(:enums) { EnumsTest1.instance_eval("enumattrs[:test]") }
+
+    describe "attributes" do
+      subject { enums }
+      its(:base) { should == EnumsTest1 }
+      its(:enums) { should have(5).enums }
+      its(:opts) { should be_empty }
+      its(:keys) { should == Set.new([:test1, :test2, :test3, :test4, :test5]) }
+      its(:values) { should == Set.new([1, 2, 3, 4, 5]) }
+    end
+
+    include_examples "Enumattr::Enums find methods"
+
+  end
+
+  context "with enumattr, base and :enums option" do
+    class EnumsTest2
+      include Enumattr::Base
+
+      attr_accessor :test
+
+      enumattr :test, :enums => {:test1 => 1, :test2 => 2, :test3 => 3}
+    end
+
+    let(:enums) { EnumsTest2.instance_eval("enumattrs[:test]") }
+
+    describe "attributes" do
+      subject { enums }
+      its(:base) { should == EnumsTest2 }
+      its(:enums) { should have(3).enums }
+      its(:opts) { should_not be_empty }
+      its(:keys) { should == Set.new([:test1, :test2, :test3]) }
+      its(:values) { should == Set.new([1, 2, 3]) }
+    end
+
+    include_examples "Enumattr::Enums find methods"
+  end
+
+  context "with enumattr, base and :extend option" do
+    module NameExteision
+      def name
+        @extras.first
+      end
+    end
+
+    class EnumsTest3
+      include Enumattr::Base
+
+      attr_accessor :test
+
+      enumattr :test, :extend => NameExteision do
+        enum :test1, 1, "test1 name"
+        enum :test2, 2, "test2 name"
+        enum :test3, 3, "test3 name"
+        enum :test4, 4, "test4 name"
+      end
+    end
+
+    let(:enums) { EnumsTest3.instance_eval("enumattrs[:test]") }
+
+    describe "attributes" do
+      subject { enums }
+      its(:base) { should == EnumsTest3 }
+      its(:enums) { should have(4).enums }
+      its(:opts) { should_not be_empty }
+      its(:keys) { should == Set.new([:test1, :test2, :test3, :test4]) }
+      its(:values) { should == Set.new([1, 2, 3, 4]) }
+    end
+
+    include_examples "Enumattr::Enums find methods"
+
+    describe "enum_by_key :test1" do
+      describe "extension method" do
+        subject { enums.enum_by_key(:test1) }
+        its(:name) { should == "test1 name" }
+      end
+    end
   end
 end
