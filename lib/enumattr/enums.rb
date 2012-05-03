@@ -10,7 +10,7 @@ module Enumattr
       @base     = base
       @opts     = opts.freeze
       @set      = enum_set(&block)
-      decorate
+      decorate @set
     end
 
     def enums
@@ -45,9 +45,9 @@ module Enumattr
       context.instance_variable_get(:@set)
     end
 
-    def decorate
+    def decorate(set)
       if @opts.has_key?(:extend)
-        @set.each{|enum| enum.extend @opts[:extend] }
+        set.each{|enum| enum.extend @opts[:extend] }
       end
     end
 
