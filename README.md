@@ -20,7 +20,7 @@ Or install it yourself as:
 
 ## Usage
 
-## Basics
+### Basics
 
 1. `include Enumattr::Base`
 2. declare `enumattr :attr_name do ... end`
