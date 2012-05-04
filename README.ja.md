@@ -117,6 +117,18 @@ _Enum オブジェクト_ (`Enumattr::Enums::Enum`) は、`key` と `value` と�
     user.status_inactive?
     #=> true
 
+### オプション
+
+* `:on`
+  * enumattr に指定している名前と同じメソッドあるいは属性が存在しない場合に、参照すべきメソッドや属性を指定できます
+  * `enumattr :enumattr_name, :on => :existent_attribute do ...`
+* `:enums`
+  * ハッシュで enum オブジェクトのマッピングを定義できます。ブロックによる enum オブジェクトの指定の代替記法です
+  * `enumattr :enumattr_name, :enums => {:keyword1 => value1, :keyword2 => value2}`
+* `:extend`
+  * モジュールを指定して enum オブジェクトを拡張することができます
+  * `enumattr :enumattr_name, :extend => Extension do ...`
+
 ## その他の例
 
 _examples/*.rb_ と _spec/enumattr/*.rb_ を参照してください。

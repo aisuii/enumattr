@@ -117,6 +117,18 @@ example:
     user.status_inactive?
     #=> true
 
+### Options
+
+* `:on`
+  * specify existent attribute or method if `enumattr_name` attribute or method doesn't exist
+  * `enumattr :enumattr_name, :on => :existent_attribute do ...`
+* `:enums`
+  * altenative enum defining leteral by hash instead of block
+  * `enumattr :enumattr_name, :enums => {:keyword1 => value1, :keyword2 => value2}`
+* `:extend`
+  * enum object extension
+  * `enumattr :enumattr_name, :extend => Extension do ...`
+
 ## More examples
 
 see: _examples/*.rb_ and _spec/enumattr/*.rb_
