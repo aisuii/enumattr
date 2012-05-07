@@ -14,4 +14,6 @@ Gem::Specification.new do |gem|
   gem.name          = "enumattr"
   gem.require_paths = ["lib"]
   gem.version       = Enumattr::VERSION
+
+  gem.add_development_dependency('rspec')
 end
