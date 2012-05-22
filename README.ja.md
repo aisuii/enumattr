@@ -47,9 +47,9 @@ bundler を利用しているなら、Gemfile に以下の行を加え、
 すると、クラスメソッドとインスタンスメソッドが定義されます。
 
 * クラスメソッド
-  * `User.status_keys` (`{attr_name}_keys`) は、キーワードの集合を返します
-  * `User.status_values` (`{attr_name}_values`) は、値の集合を返します
-  * `User.status_enums` (`{attr_name}_enums`) は Enum オブジェクトの集合を返します
+  * `User.status_keys` (`{attr_name}_keys`) は、キーワードの配列を返します
+  * `User.status_values` (`{attr_name}_values`) は、値の配列を返します
+  * `User.status_enums` (`{attr_name}_enums`) は Enum オブジェクトの配列を返します
   * `User.status_enum(:active)` (`{attr_name}_enum(:keyword)`) は、`:keyword` に対応する Enum オブジェクトを返します
   * `User.status_value(:active)` (`{attr_name}_value(:keyword)`) は、`:keyword` に対応する値を返します
 * インスタンスメソッド
@@ -64,13 +64,13 @@ _Enum オブジェクト_ (`Enumattr::Enums::Enum`) は、`key` と `value` と�
 例:
 
     User.status_keys
-    #=> #<Set: {:active, :inactive, :deleted}>
+    #=> [:active, :inactive, :deleted]
 
     User.status_values
-    #=> #<Set: {1, 2, 3}>
+    #=> [1, 2, 3]
 
     User.status_enums
-    #=> #<Set: {#<Enumattr::Enums::Enum:0x007ff58b220618 @container=#<Enumattr::Enums:0x007ff58b2207a8>, #<Enumattr::Enums::Enum:0x007ff58b220488 @container=#<Enumattr::Enums:0x007ff58b2207a8>, @key=:inactive, @value=2, @extras=[]>, #<Enumattr::Enums::Enum:0x007ff58b220488 @container=#<Enumattr::Enums:0x007ff58b2207a8>, @key=:deleted, @value=3, @extras=[]>}>
+    #=> [#<Enumattr::Enums::Enum:0x9459d00, @key=:active, @value=1, @extras=[]>, #<Enumattr::Enums::Enum:0x9459c88, @key=:inactive, @value=2, @extras=[]>, #<Enumattr::Enums::Enum:0x9459be8, @key=:deleted, @value=3, @extras=[]>]
 
 
     enum = User.status_enum(:active)
@@ -123,7 +123,8 @@ _Enum オブジェクト_ (`Enumattr::Enums::Enum`) は、`key` と `value` と�
   * enumattr に指定している名前と同じメソッドあるいは属性が存在しない場合に、参照すべきメソッドや属性を指定できます
   * `enumattr :enumattr_name, :on => :existent_attribute do ...`
 * `:enums`
-  * ハッシュで enum オブジェクトのマッピングを定義できます。ブロックによる enum オブジェクトの指定の代替記法です
+  * Hash で enum オブジェクトのマッピングを定義できます。ブロックによる enum オブジェクトの指定の代替記法です
+  * Hash で定義した場合、Ruby 1.8.7 以前では配列を返すクラスメソッドで順序が保証されません (`[[:keyword, value1], [:keyword2, value2]]` で代用は可能)
   * `enumattr :enumattr_name, :enums => {:keyword1 => value1, :keyword2 => value2}`
 * `:extend`
   * モジュールを指定して enum オブジェクトを拡張することができます

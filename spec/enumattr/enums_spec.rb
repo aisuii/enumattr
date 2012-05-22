@@ -56,8 +56,8 @@ describe Enumattr::Enums do
       its(:base) { should == EnumsTest1 }
       its(:enums) { should have(5).enums }
       its(:opts) { should be_empty }
-      its(:keys) { should == Set.new([:test1, :test2, :test3, :test4, :test5]) }
-      its(:values) { should == Set.new([1, 2, 3, 4, 5]) }
+      its(:keys) { should == [:test1, :test2, :test3, :test4, :test5] }
+      its(:values) { should == [1, 2, 3, 4, 5] }
     end
 
     include_examples "Enumattr::Enums find methods"
@@ -80,8 +80,11 @@ describe Enumattr::Enums do
       its(:base) { should == EnumsTest2 }
       its(:enums) { should have(3).enums }
       its(:opts) { should_not be_empty }
-      its(:keys) { should == Set.new([:test1, :test2, :test3]) }
-      its(:values) { should == Set.new([1, 2, 3]) }
+      its(:keys) { should == [:test1, :test2, :test3] }
+      its(:values) { should == [1, 2, 3] }
+      # if Ruby version <= 1.8.7
+      # its(:keys) { should =~ [:test1, :test2, :test3] }
+      # its(:values) { should =~ [1, 2, 3] }
     end
 
     include_examples "Enumattr::Enums find methods"
@@ -114,8 +117,8 @@ describe Enumattr::Enums do
       its(:base) { should == EnumsTest3 }
       its(:enums) { should have(4).enums }
       its(:opts) { should_not be_empty }
-      its(:keys) { should == Set.new([:test1, :test2, :test3, :test4]) }
-      its(:values) { should == Set.new([1, 2, 3, 4]) }
+      its(:keys) { should == [:test1, :test2, :test3, :test4] }
+      its(:values) { should == [1, 2, 3, 4] }
     end
 
     include_examples "Enumattr::Enums find methods"

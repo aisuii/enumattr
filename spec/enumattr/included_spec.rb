@@ -9,7 +9,7 @@ describe User, 'declare with block' do
     describe '.status_enums as #{enumattr_name}_enums' do
       subject { described_class.status_enums }
 
-      it { should be_a Set }
+      it { should be_a Array }
       it { should have(3).items }
       it "should have Enum instances" do
         should satisfy { |enums|
@@ -21,7 +21,7 @@ describe User, 'declare with block' do
     describe '.status_keys as #{enumattr_name}_keys' do
       subject { described_class.status_keys }
 
-      it { should be_a Set }
+      it { should be_a Array }
       it { should have(3).items }
       it "should have Symbol instances" do
         should satisfy { |keys|
@@ -33,7 +33,7 @@ describe User, 'declare with block' do
     describe '.status_values as #{enumattr_name}_values' do
       subject { described_class.status_values }
 
-      it { should be_a Set }
+      it { should be_a Array }
       it { should have(3).items }
       it "should have Numeric instances" do
         should satisfy { |values|
@@ -145,7 +145,7 @@ describe AdminUser,"with :on option" do
     describe '.authority_enums as #{enumattr_name}_enums' do
       subject { described_class.authority_enums }
 
-      it { should be_a Set }
+      it { should be_a Array }
       it { should have(3).items }
       it "should have Enum instances" do
         should satisfy { |enums|
@@ -157,7 +157,7 @@ describe AdminUser,"with :on option" do
     describe '.authority_keys as #{enumattr_name}_keys' do
       subject { described_class.authority_keys }
 
-      it { should be_a Set }
+      it { should be_a Array }
       it { should have(3).items }
       it "should have Symbol instances" do
         should satisfy { |keys|
@@ -169,7 +169,7 @@ describe AdminUser,"with :on option" do
     describe '.authority_values as #{enumattr_name}_values' do
       subject { described_class.authority_values }
 
-      it { should be_a Set }
+      it { should be_a Array }
       it { should have(3).items }
       it "should have Numeric instances" do
         should satisfy { |values|
@@ -271,7 +271,7 @@ describe Entry,"with :enums option" do
     describe '.show_flag_enums as #{enumattr_name}_enums' do
       subject { described_class.show_flag_enums }
 
-      it { should be_a Set }
+      it { should be_a Array }
       it { should have(2).items }
       it "should have Enum instances" do
         should satisfy { |enums|
@@ -283,7 +283,7 @@ describe Entry,"with :enums option" do
     describe '.show_flag_keys as #{enumattr_name}_keys' do
       subject { described_class.show_flag_keys }
 
-      it { should be_a Set }
+      it { should be_a Array }
       it { should have(2).items }
       it "should have Symbol instances" do
         should satisfy { |keys|
@@ -295,7 +295,7 @@ describe Entry,"with :enums option" do
     describe '.show_flag_values as #{enumattr_name}_values' do
       subject { described_class.show_flag_values }
 
-      it { should be_a Set }
+      it { should be_a Array }
       it { should have(2).items }
       it "should have TrueClass or FalseClass instances" do
         should satisfy { |values|

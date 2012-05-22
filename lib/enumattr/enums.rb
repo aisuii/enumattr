@@ -1,5 +1,4 @@
 # -*- encoding: utf-8 -*-
-require 'set'
 
 module Enumattr
   class Enums
@@ -9,32 +8,32 @@ module Enumattr
       @enumattr = enumattr
       @base     = base
       @opts     = opts.freeze
-      @set      = enum_set(&block)
-      decorate @set
+      @enums    = build_enums(&block)
+      decorate @enums
     end
 
     def enums
-      @set.clone
+      @enums.clone
     end
 
     def keys
-      Set.new @set.map(&:key)
+      @enums.map(&:key)
     end
 
     def values
-      Set.new @set.map(&:value)
+      @enums.map(&:value)
     end
 
     def enum_by_key(key)
-      @set.find{|enum| enum.key == key }
+      @enums.find{|enum| enum.key == key }
     end
 
     def enum_by_value(value)
-      @set.find{|enum| enum.value == value }
+      @enums.find{|enum| enum.value == value }
     end
 
     private
-    def enum_set(&block)
+    def build_enums(&block)
       if enums_hash = @opts[:enums]
         closure = proc{ enums_hash.each{|key, value| enum key, value } }
       else
@@ -42,25 +41,25 @@ module Enumattr
       end
 
       context = Context.new(self, &closure)
-      context.instance_variable_get(:@set)
+      context.instance_variable_get(:@enums)
     end
 
-    def decorate(set)
+    def decorate(enums)
       if @opts.has_key?(:extend)
-        set.each{|enum| enum.extend @opts[:extend] }
+        enums.each{|enum| enum.extend @opts[:extend] }
       end
     end
 
     class Context
       def initialize(container, &closure)
         @container = container
-        @set = Set.new
+        @enums = []
         instance_eval(&closure)
       end
 
       private
       def enum(key, value, *extras)
-        @set.add Enum.new(@container, key, value, *extras)
+        @enums << Enum.new(@container, key, value, *extras)
       end
     end
 

@@ -47,9 +47,9 @@ example:
 then defining class methods and instance methods.
 
 * class methods
-  * `User.status_keys` as `{attr_name}_keys` return keyword set
-  * `User.status_values` as `{attr_name}_values` return value set
-  * `User.status_enums` as `{attr_name}_enums` return Enum object set
+  * `User.status_keys` as `{attr_name}_keys` return keyword array
+  * `User.status_values` as `{attr_name}_values` return value array
+  * `User.status_enums` as `{attr_name}_enums` return Enum object array
   * `User.status_enum(:active)` as `{attr_name}_enum(:keyword)` return an Enum object
   * `User.status_value(:active)` as `{attr_name}_value(:keyword)` return a value
 * instance methods
@@ -64,13 +64,13 @@ _Enum object_ (`Enumattr::Enums::Enum`) has `key` and `value` attributes
 example:
 
     User.status_keys
-    #=> #<Set: {:active, :inactive, :deleted}>
+    #=> [:active, :inactive, :deleted]
 
     User.status_values
-    #=> #<Set: {1, 2, 3}>
+    #=> [1, 2, 3]
 
     User.status_enums
-    #=> #<Set: {#<Enumattr::Enums::Enum:0x007ff58b220618 @container=#<Enumattr::Enums:0x007ff58b2207a8>, #<Enumattr::Enums::Enum:0x007ff58b220488 @container=#<Enumattr::Enums:0x007ff58b2207a8>, @key=:inactive, @value=2, @extras=[]>, #<Enumattr::Enums::Enum:0x007ff58b220488 @container=#<Enumattr::Enums:0x007ff58b2207a8>, @key=:deleted, @value=3, @extras=[]>}>
+    #=> [#<Enumattr::Enums::Enum:0x9459d00, @key=:active, @value=1, @extras=[]>, #<Enumattr::Enums::Enum:0x9459c88, @key=:inactive, @value=2, @extras=[]>, #<Enumattr::Enums::Enum:0x9459be8, @key=:deleted, @value=3, @extras=[]>]
 
 
     enum = User.status_enum(:active)
@@ -125,6 +125,7 @@ example:
 * `:enums`
   * altenative enum defining leteral by hash instead of block
   * `enumattr :enumattr_name, :enums => {:keyword1 => value1, :keyword2 => value2}`
+  * `enumattr :enumattr_name, :enums => [[:keyword1, value1], [:keyword2, value2]]` (Ruby 1.8.7 and need ordered)
 * `:extend`
   * enum object extension
   * `enumattr :enumattr_name, :extend => Extension do ...`
